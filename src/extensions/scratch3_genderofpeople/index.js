@@ -297,13 +297,21 @@ class Scratch3GenderOfPeopleBlocks {
                     blockType: BlockType.REPORTER,
                     text: formatMessage({
                         id: 'gender.ingest',
-                        default: 'Enter Model ID: [FLOW_ID] and your gender information: [INFO]',
+                        default: 'Enter Model ID: [FLOW_ID] and your gender information: [hobby], [clothes_color] and [job]',
                         description: 'ingest data here'
                     }),
                     arguments: {
-                        INFO: {
+                        hobby: {
                             type: ArgumentType.STRING,
-                            defaultValue: '[Information]'
+                            defaultValue: '[hobby]'
+                        },
+                        clothes_color: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '[clothes_color]'
+                        },
+                        job: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '[job]'
                         },
                         FLOW_ID: {
                             type: ArgumentType.STRING,
@@ -322,10 +330,8 @@ class Scratch3GenderOfPeopleBlocks {
     }
 
     getClass(args) {
-        if (args.FLOW_ID && args.FLOW_ID != '[FlowID]' && args.INFO && args.INFO !== '[Information]') {
+        if (args.FLOW_ID && args.FLOW_ID != '[FlowID]' && args.hobby && args.hobby !== '[hobby]' && args.clothes_color && args.clothes_color !== '[clothes_color]' && args.job && args.job !== '[job]') {
             try {
-                var res = args.INFO.split(",");
-                var array = Array.from(res)
                 const reqData = {
                     "datasets": [
                         {
@@ -336,9 +342,9 @@ class Scratch3GenderOfPeopleBlocks {
                             "data": [
                                 {
                                     "id": 1,
-                                    "hobby": array[0],
-                                    "clothes_color": array[1],
-                                    "job": array[2],
+                                    "hobby": args.hobby.trim(),
+                                    "clothes_color": args.clothes_color.trim(),
+                                    "job": args.job.trim(),
                                     "gender": ""
                                 }
                             ]
