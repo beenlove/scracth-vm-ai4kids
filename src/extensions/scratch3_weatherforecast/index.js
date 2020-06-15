@@ -302,15 +302,15 @@ class Scratch3WeatherforecastBlocks {
                     }),
                     arguments: {
                         temperature: {
-                            type: ArgumentType.STRING,
+                            type: ArgumentType.NUMBER,
                             defaultValue: '[temperature]'
                         },
                         humidity: {
-                            type: ArgumentType.STRING,
+                            type: ArgumentType.NUMBER,
                             defaultValue: '[humidity]'
                         },
                         flux: {
-                            type: ArgumentType.STRING,
+                            type: ArgumentType.NUMBER,
                             defaultValue: '[flux]'
                         },
                         FLOW_ID: {
@@ -342,9 +342,9 @@ class Scratch3WeatherforecastBlocks {
                             "data": [
                                 {
                                     "id": 1,
-                                    "temperature": args.temperature.trim(),
-                                    "humidity": args.humidity.trim(),
-                                    "flux": args.flux.trim(),
+                                    "temperature": args.temperature,
+                                    "humidity": args.humidity,
+                                    "flux": args.flux,
                                     "label": ""
                                 }
                             ]
