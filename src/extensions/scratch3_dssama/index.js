@@ -517,7 +517,7 @@ class Scratch3DssamaBlocks {
                         }
                     ]
                 };
-                const response = request('POST', `http://27.71.225.219:4823/released/runflow/${args.FLOW_ID}`, {
+                const response = request('POST', `http://35.247.161.243:4803/released/runflow/${args.FLOW_ID}`, {
                     json: reqData,
                 });
                 const result = JSON.parse(response.getBody('utf8'));
