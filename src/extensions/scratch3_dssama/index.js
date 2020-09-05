@@ -99,7 +99,10 @@ class Scratch3DssamaBlocks {
      * @type {{min: number, max: number}}
      */
     static get PEN_SIZE_RANGE() {
-        return { min: 1, max: 1200 };
+        return {
+            min: 1,
+            max: 1200
+        };
     }
 
     /**
@@ -134,7 +137,9 @@ class Scratch3DssamaBlocks {
         if (this._penSkinId < 0 && this.runtime.renderer) {
             this._penSkinId = this.runtime.renderer.createPenSkin();
             this._penDrawableId = this.runtime.renderer.createDrawable(StageLayering.PEN_LAYER);
-            this.runtime.renderer.updateDrawableProperties(this._penDrawableId, { skinId: this._penSkinId });
+            this.runtime.renderer.updateDrawableProperties(this._penDrawableId, {
+                skinId: this._penSkinId
+            });
         }
         return this._penSkinId;
     }
@@ -208,8 +213,7 @@ class Scratch3DssamaBlocks {
      * @private
      */
     _initColorParam() {
-        return [
-            {
+        return [{
                 text: formatMessage({
                     id: 'pen.colorMenu.color',
                     default: 'color',
@@ -291,8 +295,7 @@ class Scratch3DssamaBlocks {
                 description: 'Ingest some Data'
             }),
             blockIconURI: blockIconURI,
-            blocks: [
-                {
+            blocks: [{
                     opcode: 'getClass',
                     blockType: BlockType.REPORTER,
                     text: formatMessage({
@@ -304,6 +307,37 @@ class Scratch3DssamaBlocks {
                         QUEST: {
                             type: ArgumentType.STRING,
                             defaultValue: '[Question]'
+                        },
+                        FLOW_ID: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '[FlowID]'
+                        }
+                    }
+                },
+                {
+                    opcode: 'getIrisType',
+                    blockType: BlockType.REPORTER,
+                    text: formatMessage({
+                        id: 'dssama.iris',
+                        default: 'Mã flow đã deploy: [FLOW_ID] Đầu vào (cm): Chiều dài đài hoa: [sepal_length], Chiều rộng đài hoa: [sepal_width], Chiều dài cánh hoa: [petal_length], Chiều rộng cánh hoa: [petal_width]',
+                        description: 'ingest data iris here'
+                    }),
+                    arguments: {
+                        sepal_length: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 0
+                        },
+                        sepal_width: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 0
+                        },
+                        petal_length: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 0
+                        },
+                        petal_width: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 0
                         },
                         FLOW_ID: {
                             type: ArgumentType.STRING,
@@ -498,24 +532,20 @@ class Scratch3DssamaBlocks {
     }
 
     getClass(args) {
-        if (args.FLOW_ID && args.FLOW_ID != '[FlowID]' && args.QUEST && args.QUEST !== '[Question]') {
+        if (args.FLOW_ID && args.FLOW_ID != '[FlowID]' && args.QUEST && args.QUEST != '[Question]') {
             try {
                 const reqData = {
-                    "datasets": [
-                        {
-                            "inputStageId": "",
-                            "idCol": "Id",
-                            "labelCol": "Class",
-                            "dataType": "text",
-                            "data": [
-                                {
-                                    "Id": 1,
-                                    "Quest": args.QUEST,
-                                    "Class": ""
-                                }
-                            ]
-                        }
-                    ]
+                    "datasets": [{
+                        "inputStageId": "",
+                        "idCol": "Id",
+                        "labelCol": "Class",
+                        "dataType": "text",
+                        "data": [{
+                            "Id": 1,
+                            "Quest": args.QUEST,
+                            "Class": ""
+                        }]
+                    }]
                 };
                 const response = request('POST', `http://35.247.161.243:4803/released/runflow/${args.FLOW_ID}`, {
                     json: reqData,
@@ -527,6 +557,40 @@ class Scratch3DssamaBlocks {
             }
         }
     }
+
+    getIrisType(args) {
+        if (args.FLOW_ID && args.FLOW_ID != '[FlowID]' && args.sepal_length != 0 && args.sepal_width != 0 && args.petal_length != 0 && args.petal_width != 0) {
+            try {
+                const reqData = {
+                    "datasets": [{
+                        "inputStageId": "",
+                        "data": [{
+                            "sepal length (cm)": args.sepal_length,
+                            "sepal width (cm)": args.sepal_width,
+                            "petal length (cm)": args.petal_length,
+                            "petal width (cm)": args.petal_width
+                        }]
+                    }]
+                };
+                const response = request('POST', `http://35.247.161.243:4803/released/runflow/${args.FLOW_ID}`, {
+                    json: reqData,
+                });
+                const result = JSON.parse(response.getBody('utf8'));
+                if (result.error) return result.error;
+                else {
+                    if (result[0]['y_pred'] == 0) return "Mình đoán đó là hoa Iris setosa";
+                    else if (result[0]['y_pred'] == 1) return "Mình đoán đó là hoa Iris virginica";
+                    else if (result[0]['y_pred'] == 2) return "Mình đoán đó là hoa Iris versicolor";
+                    else return "Mình không thể dự đoán được loại hoa này";
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        } else {
+            return "Flow id không được để trống và các thuộc tính của hoa phải khác 0";
+        }
+    }
+
 
     /**
      * The pen "stamp" block stamps the current drawable's image onto the pen layer.
@@ -762,7 +826,9 @@ class Scratch3DssamaBlocks {
     changePenShadeBy(args, util) {
         const penState = this._getPenState(util.target);
         const shadeChange = Cast.toNumber(args.SHADE);
-        this.setPenShadeToNumber({ SHADE: penState._shade + shadeChange }, util);
+        this.setPenShadeToNumber({
+            SHADE: penState._shade + shadeChange
+        }, util);
     }
 
     /**
@@ -772,7 +838,11 @@ class Scratch3DssamaBlocks {
      */
     _legacyUpdatePenColor(penState) {
         // Create the new color in RGB using the scratch 2 "shade" model
-        let rgb = Color.hsvToRgb({ h: penState.color * 360 / 100, s: 1, v: 1 });
+        let rgb = Color.hsvToRgb({
+            h: penState.color * 360 / 100,
+            s: 1,
+            v: 1
+        });
         const shade = (penState._shade > 100) ? 200 - penState._shade : penState._shade;
         if (shade < 50) {
             rgb = Color.mixRgb(Color.RGB_BLACK, rgb, (10 + shade) / 60);
