@@ -69,7 +69,7 @@ class Scratch3GenderOfPeopleBlocks {
         this._onTargetMoved = this._onTargetMoved.bind(this);
 
         runtime.on('targetWasCreated', this._onTargetCreated);
-        runtime.on('RUNTIME_DISPOSED', this.getClass.bind(this));
+        runtime.on('RUNTIME_DISPOSED', this.getGender.bind(this));
     }
 
     /**
@@ -292,30 +292,30 @@ class Scratch3GenderOfPeopleBlocks {
             }),
             blockIconURI: blockIconURI,
             blocks: [
-                {
-                    opcode: 'getClass',
+		{
+                    opcode: 'getGender',
                     blockType: BlockType.REPORTER,
                     text: formatMessage({
-                        id: 'gender.ingest',
-                        default: 'Enter Model ID: [FLOW_ID] and your gender information: [hobby], [clothes_color] and [job]',
-                        description: 'ingest data here'
+                        id: 'dssama.gender',
+                        default: 'Flow id: [FLOW_ID], hobby: [hobby], clothes color: [clothes_color], job: [job]',
+                        description: ''
                     }),
                     arguments: {
+                        FLOW_ID: {
+                            type: ArgumentType.STRING,
+                            defaultValue: ' '
+                        },
                         hobby: {
                             type: ArgumentType.STRING,
-                            defaultValue: '[hobby]'
+                            defaultValue: ' '
                         },
                         clothes_color: {
                             type: ArgumentType.STRING,
-                            defaultValue: '[clothes_color]'
+                            defaultValue: ' '
                         },
                         job: {
                             type: ArgumentType.STRING,
-                            defaultValue: '[job]'
-                        },
-                        FLOW_ID: {
-                            type: ArgumentType.STRING,
-                            defaultValue: '[FlowID]'
+                            defaultValue: ' '
                         }
                     }
                 }
@@ -329,29 +329,20 @@ class Scratch3GenderOfPeopleBlocks {
         };
     }
 
-    getClass(args) {
-        if (args.FLOW_ID && args.FLOW_ID != '[FlowID]' && args.hobby && args.hobby !== '[hobby]' && args.clothes_color && args.clothes_color !== '[clothes_color]' && args.job && args.job !== '[job]') {
+    getGender(args) {
+        if (args.FLOW_ID && args.FLOW_ID != ' ' && args.hobby && args.clothes_color && args.job && args.hobby != ' ' && args.clothes_color != ' ' && args.job != ' ' ) {
             try {
                 const reqData = {
-                    "datasets": [
-                        {
-                            "inputStageId": "",
-                            "idCol": "id",
-                            "labelCol": "gender",
-                            "dataType": "tabular",
-                            "data": [
-                                {
-                                    "id": 1,
-                                    "hobby": args.hobby.trim(),
-                                    "clothes_color": args.clothes_color.trim(),
-                                    "job": args.job.trim(),
-                                    "gender": ""
-                                }
-                            ]
-                        }
-                    ]
+                    "datasets": [{
+                        "inputStageId": "",
+                        "data": [{
+                            "hobby": args.hobby,
+                            "clothes_color": args.clothes_color,
+                            "job": args.job
+                        }]
+                    }]
                 };
-                const response = request('POST', `http://27.71.225.219:4823/released/runflow/${args.FLOW_ID}`, {
+                const response = request('POST', `http://35.247.161.243:4803/released/runflow/${args.FLOW_ID}`, {
                     json: reqData,
                 });
                 const result = JSON.parse(response.getBody('utf8'));
@@ -359,10 +350,10 @@ class Scratch3GenderOfPeopleBlocks {
             } catch (error) {
                 console.error(error);
             }
+        } else {
+            return "Tất cả đầu vào không được để trống";
         }
-    }
-
-    /**
+    }    /**
      * The pen "stamp" block stamps the current drawable's image onto the pen layer.
      * @param {object} args - the block arguments.
      * @param {object} util - utility object provided by the runtime.

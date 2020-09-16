@@ -69,7 +69,7 @@ class Scratch3WeatherforecastBlocks {
         this._onTargetMoved = this._onTargetMoved.bind(this);
 
         runtime.on('targetWasCreated', this._onTargetCreated);
-        runtime.on('RUNTIME_DISPOSED', this.getClass.bind(this));
+        runtime.on('RUNTIME_DISPOSED', this.getWeather.bind(this));
     }
 
     /**
@@ -292,33 +292,34 @@ class Scratch3WeatherforecastBlocks {
             }),
             blockIconURI: blockIconURI,
             blocks: [
-                {
-                    opcode: 'getClass',
+{
+                    opcode: 'getWeather',
                     blockType: BlockType.REPORTER,
                     text: formatMessage({
-                        id: 'weather.ingest',
-                        default: 'Enter Model ID: [FLOW_ID] and your weather information: [temperature], [humidity] and [flux]',
-                        description: 'ingest data here'
+                        id: 'dssama.weather',
+                        default: 'Flow id: [FLOW_ID], temperature: [temperature], humidity: [humidity], cloud cover: [cloud_cover]',
+                        description: ''
                     }),
                     arguments: {
+                        FLOW_ID: {
+                            type: ArgumentType.STRING,
+                            defaultValue: ' '
+                        },
                         temperature: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: '[temperature]'
+                            defaultValue: 0
                         },
                         humidity: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: '[humidity]'
+                            defaultValue: 0
                         },
-                        flux: {
+                        cloud_cover: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: '[flux]'
-                        },
-                        FLOW_ID: {
-                            type: ArgumentType.STRING,
-                            defaultValue: '[FlowID]'
+                            defaultValue: 0
                         }
                     }
                 }
+
             ],
             menus: {
                 colorParam: {
@@ -329,29 +330,20 @@ class Scratch3WeatherforecastBlocks {
         };
     }
 
-    getClass(args) {
-        if (args.FLOW_ID && args.FLOW_ID != '[FlowID]' && args.temperature && args.temperature !== '[temperature]' && args.humidity && args.humidity !== '[humidity]' && args.flux && args.flux !== '[flux]') {
+ getWeather(args) {
+        if (args.FLOW_ID && args.FLOW_ID != ' ' && args.humidity && args.cloud_cover && args.temperature && args.humidity != 0 && args.cloud_cover != 0 && args.temperature != 0 ) {
             try {
                 const reqData = {
-                    "datasets": [
-                        {
-                            "inputStageId": "",
-                            "idCol": "id",
-                            "labelCol": "label",
-                            "dataType": "tabular",
-                            "data": [
-                                {
-                                    "id": 1,
-                                    "temperature": args.temperature,
-                                    "humidity": args.humidity,
-                                    "flux": args.flux,
-                                    "label": ""
-                                }
-                            ]
-                        }
-                    ]
+                    "datasets": [{
+                        "inputStageId": "",
+                        "data": [{
+                            "temperature": args.temperature,
+                            "humidity": args.humidity,
+                            "cloud_cover": args.cloud_cover
+                        }]
+                    }]
                 };
-                const response = request('POST', `http://27.71.225.219:4823/released/runflow/${args.FLOW_ID}`, {
+                const response = request('POST', `http://35.247.161.243:4803/released/runflow/${args.FLOW_ID}`, {
                     json: reqData,
                 });
                 const result = JSON.parse(response.getBody('utf8'));
@@ -359,9 +351,10 @@ class Scratch3WeatherforecastBlocks {
             } catch (error) {
                 console.error(error);
             }
+        } else {
+            return "Flow id không được để trống và các thuộc tính phải khác 0";
         }
     }
-
     /**
      * The pen "stamp" block stamps the current drawable's image onto the pen layer.
      * @param {object} args - the block arguments.
