@@ -43,7 +43,7 @@ const ColorParam = {
  * @param {Runtime} runtime - the runtime instantiating this block package.
  * @constructor
  */
-class Scratch3DssamaBlocks {
+class Scratch3ClassificationQuestionsBlocks {
     constructor(runtime) {
         /**
          * The runtime instantiating this block package.
@@ -99,10 +99,7 @@ class Scratch3DssamaBlocks {
      * @type {{min: number, max: number}}
      */
     static get PEN_SIZE_RANGE() {
-        return {
-            min: 1,
-            max: 1200
-        };
+        return { min: 1, max: 1200 };
     }
 
     /**
@@ -122,8 +119,8 @@ class Scratch3DssamaBlocks {
     _clampPenSize(requestedSize) {
         return MathUtil.clamp(
             requestedSize,
-            Scratch3DssamaBlocks.PEN_SIZE_RANGE.min,
-            Scratch3DssamaBlocks.PEN_SIZE_RANGE.max
+            Scratch3ClassificationQuestionsBlocks.PEN_SIZE_RANGE.min,
+            Scratch3ClassificationQuestionsBlocks.PEN_SIZE_RANGE.max
         );
     }
 
@@ -137,9 +134,7 @@ class Scratch3DssamaBlocks {
         if (this._penSkinId < 0 && this.runtime.renderer) {
             this._penSkinId = this.runtime.renderer.createPenSkin();
             this._penDrawableId = this.runtime.renderer.createDrawable(StageLayering.PEN_LAYER);
-            this.runtime.renderer.updateDrawableProperties(this._penDrawableId, {
-                skinId: this._penSkinId
-            });
+            this.runtime.renderer.updateDrawableProperties(this._penDrawableId, { skinId: this._penSkinId });
         }
         return this._penSkinId;
     }
@@ -150,10 +145,10 @@ class Scratch3DssamaBlocks {
      * @private
      */
     _getPenState(target) {
-        let penState = target.getCustomState(Scratch3DssamaBlocks.STATE_KEY);
+        let penState = target.getCustomState(Scratch3ClassificationQuestionsBlocks.STATE_KEY);
         if (!penState) {
-            penState = Clone.simple(Scratch3DssamaBlocks.DEFAULT_PEN_STATE);
-            target.setCustomState(Scratch3DssamaBlocks.STATE_KEY, penState);
+            penState = Clone.simple(Scratch3ClassificationQuestionsBlocks.DEFAULT_PEN_STATE);
+            target.setCustomState(Scratch3ClassificationQuestionsBlocks.STATE_KEY, penState);
         }
         return penState;
     }
@@ -167,9 +162,9 @@ class Scratch3DssamaBlocks {
      */
     _onTargetCreated(newTarget, sourceTarget) {
         if (sourceTarget) {
-            const penState = sourceTarget.getCustomState(Scratch3DssamaBlocks.STATE_KEY);
+            const penState = sourceTarget.getCustomState(Scratch3ClassificationQuestionsBlocks.STATE_KEY);
             if (penState) {
-                newTarget.setCustomState(Scratch3DssamaBlocks.STATE_KEY, Clone.simple(penState));
+                newTarget.setCustomState(Scratch3ClassificationQuestionsBlocks.STATE_KEY, Clone.simple(penState));
                 if (penState.penDown) {
                     newTarget.addListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
                 }
@@ -213,7 +208,8 @@ class Scratch3DssamaBlocks {
      * @private
      */
     _initColorParam() {
-        return [{
+        return [
+            {
                 text: formatMessage({
                     id: 'pen.colorMenu.color',
                     default: 'color',
@@ -288,18 +284,19 @@ class Scratch3DssamaBlocks {
      */
     getInfo() {
         return {
-            id: 'dssama',
+            id: 'classificationquestions',
             name: formatMessage({
-                id: 'dssama.categoryName',
-                default: 'Dssama',
+                id: 'classificationquestions.categoryName',
+                default: 'Clasification Questions',
                 description: 'Ingest some Data'
             }),
             blockIconURI: blockIconURI,
-            blocks: [{
+            blocks: [
+                {
                     opcode: 'getClass',
                     blockType: BlockType.REPORTER,
                     text: formatMessage({
-                        id: 'dssama.ingest',
+                        id: 'classificationquestions.ingest',
                         default: 'Enter Model ID: [FLOW_ID] and your question: [QUEST]',
                         description: 'ingest data here'
                     }),
@@ -315,130 +312,181 @@ class Scratch3DssamaBlocks {
                     }
                 },
                 // {
-                //     opcode: 'getIrisType',
-                //     blockType: BlockType.REPORTER,
+                //     opcode: 'stamp',
+                //     blockType: BlockType.COMMAND,
                 //     text: formatMessage({
-                //         id: 'dssama.iris',
-                //         default: 'Mã flow đã deploy: [FLOW_ID] Đầu vào (cm): Chiều dài đài hoa: [sepal_length], Chiều rộng đài hoa: [sepal_width], Chiều dài cánh hoa: [petal_length], Chiều rộng cánh hoa: [petal_width]',
-                //         description: 'ingest data iris here'
+                //         id: 'pen.stamp',
+                //         default: 'stamp',
+                //         description: 'render current costume on the background'
+                //     })
+                // },
+                // {
+                //     opcode: 'penDown',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.penDown',
+                //         default: 'pen down',
+                //         description: 'start leaving a trail when the sprite moves'
+                //     })
+                // },
+                // {
+                //     opcode: 'penUp',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.penUp',
+                //         default: 'pen up',
+                //         description: 'stop leaving a trail behind the sprite'
+                //     })
+                // },
+                // {
+                //     opcode: 'setPenColorToColor',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.setColor',
+                //         default: 'set pen color to [COLOR]',
+                //         description: 'set the pen color to a particular (RGB) value'
                 //     }),
                 //     arguments: {
-                //         sepal_length: {
-                //             type: ArgumentType.NUMBER,
-                //             defaultValue: 0
-                //         },
-                //         sepal_width: {
-                //             type: ArgumentType.NUMBER,
-                //             defaultValue: 0
-                //         },
-                //         petal_length: {
-                //             type: ArgumentType.NUMBER,
-                //             defaultValue: 0
-                //         },
-                //         petal_width: {
-                //             type: ArgumentType.NUMBER,
-                //             defaultValue: 0
-                //         },
-                //         FLOW_ID: {
-                //             type: ArgumentType.STRING,
-                //             defaultValue: '[FlowID]'
+                //         COLOR: {
+                //             type: ArgumentType.COLOR
                 //         }
                 //     }
                 // },
-                {
-                    opcode: 'getGender',
-                    blockType: BlockType.REPORTER,
-                    text: formatMessage({
-                        id: 'dssama.gender',
-                        default: 'Flow id: [FLOW_ID], hobby: [hobby], clothes color: [clothes_color], job: [job]',
-                        description: ''
-                    }),
-                    arguments: {
-                        FLOW_ID: {
-                            type: ArgumentType.STRING,
-                            defaultValue: ' '
-                        },
-                        hobby: {
-                            type: ArgumentType.STRING,
-                            defaultValue: ' '
-                        },
-                        clothes_color: {
-                            type: ArgumentType.STRING,
-                            defaultValue: ' '
-                        },
-                        job: {
-                            type: ArgumentType.STRING,
-                            defaultValue: ' '
-                        }
-                    }
-                },
-                {
-                    opcode: 'getWeather',
-                    blockType: BlockType.REPORTER,
-                    text: formatMessage({
-                        id: 'dssama.weather',
-                        default: 'Flow id: [FLOW_ID], temperature: [temperature], humidity: [humidity], cloud cover: [cloud_cover]',
-                        description: ''
-                    }),
-                    arguments: {
-                        FLOW_ID: {
-                            type: ArgumentType.STRING,
-                            defaultValue: ' '
-                        },
-                        temperature: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 0
-                        },
-                        humidity: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 0
-                        },
-                        cloud_cover: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 0
-                        }
-                    }
-                },
-                {
-                    opcode: "getHousePrice",
-                    blockType: BlockType.REPORTER,
-                    text: formatMessage({
-                      id: "dssama.houseprice",
-                      default:
-                        "Flow id: [FLOW_ID], transaction date: [transaction_date], house age: [house_age], distance to MRT: [distance_to_MRT], number of store: [number_of_store], latitude: [latitude], longitude: [longitude]",
-                      description: "",
-                    }),
-                    arguments: {
-                      FLOW_ID: {
-                        type: ArgumentType.STRING,
-                        defaultValue: " ",
-                      },
-                      transaction_date: {
-                        type: ArgumentType.STRING,
-                        defaultValue: " ",
-                      },
-                      house_age: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 0,
-                      },
-                      distance_to_MRT: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 0,
-                      },
-                      number_of_store: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 0,
-                      },
-                      latitude: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 0,
-                      },
-                      longitude: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 0,
-                      },
-                    },
-                  },
+                // {
+                //     opcode: 'changePenColorParamBy',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.changeColorParam',
+                //         default: 'change pen [COLOR_PARAM] by [VALUE]',
+                //         description: 'change the state of a pen color parameter'
+                //     }),
+                //     arguments: {
+                //         COLOR_PARAM: {
+                //             type: ArgumentType.STRING,
+                //             menu: 'colorParam',
+                //             defaultValue: ColorParam.COLOR
+                //         },
+                //         VALUE: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 10
+                //         }
+                //     }
+                // },
+                // {
+                //     opcode: 'setPenColorParamTo',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.setColorParam',
+                //         default: 'set pen [COLOR_PARAM] to [VALUE]',
+                //         description: 'set the state for a pen color parameter e.g. saturation'
+                //     }),
+                //     arguments: {
+                //         COLOR_PARAM: {
+                //             type: ArgumentType.STRING,
+                //             menu: 'colorParam',
+                //             defaultValue: ColorParam.COLOR
+                //         },
+                //         VALUE: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 50
+                //         }
+                //     }
+                // },
+                // {
+                //     opcode: 'changePenSizeBy',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.changeSize',
+                //         default: 'change pen size by [SIZE]',
+                //         description: 'change the diameter of the trail left by a sprite'
+                //     }),
+                //     arguments: {
+                //         SIZE: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 1
+                //         }
+                //     }
+                // },
+                // {
+                //     opcode: 'setPenSizeTo',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.setSize',
+                //         default: 'set pen size to [SIZE]',
+                //         description: 'set the diameter of a trail left by a sprite'
+                //     }),
+                //     arguments: {
+                //         SIZE: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 1
+                //         }
+                //     }
+                // },
+                // /* Legacy blocks, should not be shown in flyout */
+                // {
+                //     opcode: 'setPenShadeToNumber',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.setShade',
+                //         default: 'set pen shade to [SHADE]',
+                //         description: 'legacy pen blocks - set pen shade'
+                //     }),
+                //     arguments: {
+                //         SHADE: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 1
+                //         }
+                //     },
+                //     hideFromPalette: true
+                // },
+                // {
+                //     opcode: 'changePenShadeBy',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.changeShade',
+                //         default: 'change pen shade by [SHADE]',
+                //         description: 'legacy pen blocks - change pen shade'
+                //     }),
+                //     arguments: {
+                //         SHADE: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 1
+                //         }
+                //     },
+                //     hideFromPalette: true
+                // },
+                // {
+                //     opcode: 'setPenHueToNumber',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.setHue',
+                //         default: 'set pen color to [HUE]',
+                //         description: 'legacy pen blocks - set pen color to number'
+                //     }),
+                //     arguments: {
+                //         HUE: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 1
+                //         }
+                //     },
+                //     hideFromPalette: true
+                // },
+                // {
+                //     opcode: 'changePenHueBy',
+                //     blockType: BlockType.COMMAND,
+                //     text: formatMessage({
+                //         id: 'pen.changeHue',
+                //         default: 'change pen color by [HUE]',
+                //         description: 'legacy pen blocks - change pen color'
+                //     }),
+                //     arguments: {
+                //         HUE: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 1
+                //         }
+                //     },
+                //     hideFromPalette: true
+                // }
             ],
             menus: {
                 colorParam: {
@@ -450,22 +498,26 @@ class Scratch3DssamaBlocks {
     }
 
     getClass(args) {
-        if (args.FLOW_ID && args.FLOW_ID != ' ' && args.QUEST && args.QUEST != '[Question]') {
+        if (args.FLOW_ID && args.FLOW_ID != '[FlowID]' && args.QUEST && args.QUEST !== '[Question]') {
             try {
                 const reqData = {
-                    "datasets": [{
-                        "inputStageId": "",
-                        "idCol": "Id",
-                        "labelCol": "Class",
-                        "dataType": "text",
-                        "data": [{
-                            "Id": 1,
-                            "Quest": args.QUEST,
-                            "Class": ""
-                        }]
-                    }]
+                    "datasets": [
+                        {
+                            "inputStageId": "",
+                            "idCol": "id",
+                            "labelCol": "labels",
+                            "dataType": "text",
+                            "data": [
+                                {
+                                    "id": 1,
+                                    "questions": args.QUEST,
+                                    "labels": ""
+                                }
+                            ]
+                        }
+                    ]
                 };
-                const response = request('POST', `http://35.247.161.243:4803/released/runflow/${args.FLOW_ID}`, {
+                const response = request('POST', `http://27.71.225.219:4823/released/runflow/${args.FLOW_ID}`, {
                     json: reqData,
                 });
                 const result = JSON.parse(response.getBody('utf8'));
@@ -476,141 +528,6 @@ class Scratch3DssamaBlocks {
         }
     }
 
-    getIrisType(args) {
-        if (args.FLOW_ID && args.FLOW_ID != ' ' && args.sepal_length != 0 && args.sepal_width != 0 && args.petal_length != 0 && args.petal_width != 0) {
-            try {
-                const reqData = {
-                    "datasets": [{
-                        "inputStageId": "",
-                        "data": [{
-                            "sepal length (cm)": args.sepal_length,
-                            "sepal width (cm)": args.sepal_width,
-                            "petal length (cm)": args.petal_length,
-                            "petal width (cm)": args.petal_width
-                        }]
-                    }]
-                };
-                const response = request('POST', `http://118.70.52.237:4813/released/runflow/${args.FLOW_ID}`, {
-                    json: reqData,
-                });
-                const result = JSON.parse(response.getBody('utf8'));
-                if (result.error) return result.error;
-                else {
-                    if (result[0]['y_pred'] == 0) return "Mình đoán đó là hoa Iris setosa";
-                    else if (result[0]['y_pred'] == 1) return "Mình đoán đó là hoa Iris virginica";
-                    else if (result[0]['y_pred'] == 2) return "Mình đoán đó là hoa Iris versicolor";
-                    else return "Mình không thể dự đoán được loại hoa này";
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        } else {
-            return "Flow id không được để trống và các thuộc tính của hoa phải khác 0";
-        }
-    }
-
-    getGender(args) {
-        if (args.FLOW_ID && args.FLOW_ID != ' ' && args.hobby && args.clothes_color && args.job) {
-            try {
-                const reqData = {
-                    "datasets": [{
-                        "inputStageId": "",
-                        "data": [{
-                            "hobby": args.hobby,
-                            "clothes_color": args.clothes_color,
-                            "job": args.job
-                        }]
-                    }]
-                };
-                const response = request('POST', `http://118.70.52.237:4813/released/runflow/${args.FLOW_ID}`, {
-                    json: reqData,
-                });
-                const result = JSON.parse(response.getBody('utf8'));
-                return result[0]['y_pred'];
-            } catch (error) {
-                console.error(error);
-            }
-        } else {
-            return "Tất cả đầu vào không được để trống";
-        }
-    }
-
-
-    getWeather(args) {
-        if (args.FLOW_ID && args.FLOW_ID != ' ' && args.humidity != 0 && args.cloud_cover != 0 && args.temperature != 0 ) {
-            try {
-                const reqData = {
-                    "datasets": [{
-                        "inputStageId": "",
-                        "data": [{
-                            "temperature": args.temperature,
-                            "humidity": args.humidity,
-                            "cloud_cover": args.cloud_cover
-                        }]
-                    }]
-                };
-                console.log('reqData getWeather',reqData)
-
-                const response = request('POST', `http://118.70.52.237:4813/released/runflow/${args.FLOW_ID}`, {
-                    json: reqData,
-                });
-                const result = JSON.parse(response.getBody('utf8'));
-                return result[0]['y_pred'];
-            } catch (error) {
-                console.error(error);
-            }
-        } else {
-            return "Flow id không được để trống và các thuộc tính phải khác 0";
-        }
-    }
-
-    getHousePrice(args) {
-        if (
-          args.FLOW_ID &&
-          args.FLOW_ID != " " &&
-          args.transaction_date != " " &&
-          args.house_age != 0 &&
-          args.distance_to_MRT != 0 &&
-          args.number_of_store != 0 &&
-          args.latitude != 0 &&
-          args.longitude != 0
-        ) {
-          try {
-            const reqData = {
-              "datasets": [
-                {
-                  "inputStageId": "",
-                  "data": [
-                    {
-                      "transaction_date": args.transaction_date,
-                      "house_age": args.house_age,
-                      "distance_to_MRT": args.distance_to_MRT,
-                      "number_of_store": args.number_of_store,
-                      "latitude": args.latitude,
-                      "longitude": args.longitude,
-                    },
-                  ],
-                },
-              ],
-            };
-            console.log('reqData getHousePrice',reqData)
-
-            const response = request(
-              "POST",
-              `http://118.70.52.237:4813/released/runflow/${args.FLOW_ID}`,
-              {
-                json: reqData,
-              }
-            );
-            const result = JSON.parse(response.getBody("utf8"));
-            return result[0]["y_pred"];
-          } catch (error) {
-            console.error(error);
-          }
-        } else {
-          return "Tất cả đầu vào không được để trống";
-        }
-      }
     /**
      * The pen "stamp" block stamps the current drawable's image onto the pen layer.
      * @param {object} args - the block arguments.
@@ -845,9 +762,7 @@ class Scratch3DssamaBlocks {
     changePenShadeBy(args, util) {
         const penState = this._getPenState(util.target);
         const shadeChange = Cast.toNumber(args.SHADE);
-        this.setPenShadeToNumber({
-            SHADE: penState._shade + shadeChange
-        }, util);
+        this.setPenShadeToNumber({ SHADE: penState._shade + shadeChange }, util);
     }
 
     /**
@@ -857,11 +772,7 @@ class Scratch3DssamaBlocks {
      */
     _legacyUpdatePenColor(penState) {
         // Create the new color in RGB using the scratch 2 "shade" model
-        let rgb = Color.hsvToRgb({
-            h: penState.color * 360 / 100,
-            s: 1,
-            v: 1
-        });
+        let rgb = Color.hsvToRgb({ h: penState.color * 360 / 100, s: 1, v: 1 });
         const shade = (penState._shade > 100) ? 200 - penState._shade : penState._shade;
         if (shade < 50) {
             rgb = Color.mixRgb(Color.RGB_BLACK, rgb, (10 + shade) / 60);
@@ -879,4 +790,4 @@ class Scratch3DssamaBlocks {
     }
 }
 
-module.exports = Scratch3DssamaBlocks;
+module.exports = Scratch3ClassificationQuestionsBlocks;
