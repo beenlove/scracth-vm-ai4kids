@@ -398,7 +398,47 @@ class Scratch3DssamaBlocks {
                             defaultValue: 0
                         }
                     }
-                }
+                },
+                {
+                    opcode: "getHousePrice",
+                    blockType: BlockType.REPORTER,
+                    text: formatMessage({
+                      id: "dssama.houseprice",
+                      default:
+                        "Flow id: [FLOW_ID], transaction date: [transaction_date], house age: [house_age], distance to MRT: [distance_to_MRT], number of store: [number_of_store], latitude: [latitude], longitude: [longitude]",
+                      description: "",
+                    }),
+                    arguments: {
+                      FLOW_ID: {
+                        type: ArgumentType.STRING,
+                        defaultValue: " ",
+                      },
+                      transaction_date: {
+                        type: ArgumentType.STRING,
+                        defaultValue: " ",
+                      },
+                      house_age: {
+                        type: ArgumentType.NUMBER,
+                        defaultValue: 0,
+                      },
+                      distance_to_MRT: {
+                        type: ArgumentType.NUMBER,
+                        defaultValue: 0,
+                      },
+                      number_of_store: {
+                        type: ArgumentType.NUMBER,
+                        defaultValue: 0,
+                      },
+                      latitude: {
+                        type: ArgumentType.NUMBER,
+                        defaultValue: 0,
+                      },
+                      longitude: {
+                        type: ArgumentType.NUMBER,
+                        defaultValue: 0,
+                      },
+                    },
+                  },
             ],
             menus: {
                 colorParam: {
@@ -509,6 +549,8 @@ class Scratch3DssamaBlocks {
                         }]
                     }]
                 };
+                console.log('reqData getWeather',reqData)
+
                 const response = request('POST', `http://118.70.52.237:4813/released/runflow/${args.FLOW_ID}`, {
                     json: reqData,
                 });
@@ -521,6 +563,54 @@ class Scratch3DssamaBlocks {
             return "Flow id không được để trống và các thuộc tính phải khác 0";
         }
     }
+
+    getHousePrice(args) {
+        if (
+          args.FLOW_ID &&
+          args.FLOW_ID != " " &&
+          args.transaction_date != " " &&
+          args.house_age != 0 &&
+          args.distance_to_MRT != 0 &&
+          args.number_of_store != 0 &&
+          args.latitude != 0 &&
+          args.longitude != 0
+        ) {
+          try {
+            const reqData = {
+              "datasets": [
+                {
+                  "inputStageId": "",
+                  "data": [
+                    {
+                      "transaction_date": args.transaction_date,
+                      "house_age": args.house_age,
+                      "distance_to_MRT": args.distance_to_MRT,
+                      "number_of_store": args.number_of_store,
+                      "latitude": args.latitude,
+                      "longitude": args.longitude,
+                    },
+                  ],
+                },
+              ],
+            };
+            console.log('reqData getHousePrice',reqData)
+
+            const response = request(
+              "POST",
+              `http://118.70.52.237:4813/released/runflow/${args.FLOW_ID}`,
+              {
+                json: reqData,
+              }
+            );
+            const result = JSON.parse(response.getBody("utf8"));
+            return result[0]["y_pred"];
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          return "Tất cả đầu vào không được để trống";
+        }
+      }
     /**
      * The pen "stamp" block stamps the current drawable's image onto the pen layer.
      * @param {object} args - the block arguments.
