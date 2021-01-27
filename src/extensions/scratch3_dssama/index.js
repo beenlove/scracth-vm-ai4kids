@@ -465,7 +465,7 @@ class Scratch3DssamaBlocks {
                         }]
                     }]
                 };
-                const response = request('POST', `http://35.247.161.243:4803/released/runflow/${args.FLOW_ID}`, {
+                const response = request('POST', `http://118.70.52.237:4813/released/runflow/${args.FLOW_ID}`, {
                     json: reqData,
                 });
                 const result = JSON.parse(response.getBody('utf8'));
@@ -476,38 +476,38 @@ class Scratch3DssamaBlocks {
         }
     }
 
-    getIrisType(args) {
-        if (args.FLOW_ID && args.FLOW_ID != ' ' && args.sepal_length != 0 && args.sepal_width != 0 && args.petal_length != 0 && args.petal_width != 0) {
-            try {
-                const reqData = {
-                    "datasets": [{
-                        "inputStageId": "",
-                        "data": [{
-                            "sepal length (cm)": args.sepal_length,
-                            "sepal width (cm)": args.sepal_width,
-                            "petal length (cm)": args.petal_length,
-                            "petal width (cm)": args.petal_width
-                        }]
-                    }]
-                };
-                const response = request('POST', `http://118.70.52.237:4813/released/runflow/${args.FLOW_ID}`, {
-                    json: reqData,
-                });
-                const result = JSON.parse(response.getBody('utf8'));
-                if (result.error) return result.error;
-                else {
-                    if (result[0]['y_pred'] == 0) return "Mình đoán đó là hoa Iris setosa";
-                    else if (result[0]['y_pred'] == 1) return "Mình đoán đó là hoa Iris virginica";
-                    else if (result[0]['y_pred'] == 2) return "Mình đoán đó là hoa Iris versicolor";
-                    else return "Mình không thể dự đoán được loại hoa này";
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        } else {
-            return "Flow id không được để trống và các thuộc tính của hoa phải khác 0";
-        }
-    }
+    // getIrisType(args) {
+    //     if (args.FLOW_ID && args.FLOW_ID != ' ' && args.sepal_length != 0 && args.sepal_width != 0 && args.petal_length != 0 && args.petal_width != 0) {
+    //         try {
+    //             const reqData = {
+    //                 "datasets": [{
+    //                     "inputStageId": "",
+    //                     "data": [{
+    //                         "sepal length (cm)": args.sepal_length,
+    //                         "sepal width (cm)": args.sepal_width,
+    //                         "petal length (cm)": args.petal_length,
+    //                         "petal width (cm)": args.petal_width
+    //                     }]
+    //                 }]
+    //             };
+    //             const response = request('POST', `http://118.70.52.237:4813/released/runflow/${args.FLOW_ID}`, {
+    //                 json: reqData,
+    //             });
+    //             const result = JSON.parse(response.getBody('utf8'));
+    //             if (result.error) return result.error;
+    //             else {
+    //                 if (result[0]['y_pred'] == 0) return "Mình đoán đó là hoa Iris setosa";
+    //                 else if (result[0]['y_pred'] == 1) return "Mình đoán đó là hoa Iris virginica";
+    //                 else if (result[0]['y_pred'] == 2) return "Mình đoán đó là hoa Iris versicolor";
+    //                 else return "Mình không thể dự đoán được loại hoa này";
+    //             }
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     } else {
+    //         return "Flow id không được để trống và các thuộc tính của hoa phải khác 0";
+    //     }
+    // }
 
     getGender(args) {
         if (args.FLOW_ID && args.FLOW_ID != ' ' && args.hobby && args.clothes_color && args.job) {
